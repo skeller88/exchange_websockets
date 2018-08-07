@@ -37,10 +37,8 @@ class BtfxWss:
         self.key = key if key else ''
         self.secret = secret if secret else ''
 
-        self.conn = WebSocketConnection(log_level=log_level,
-                                        **wss_kwargs)
-        self.queue_processor = QueueProcessor(self.conn.q,
-                                              log_level=log_level)
+        self.conn = WebSocketConnection(log_level=log_level, **wss_kwargs)
+        self.queue_processor = QueueProcessor(self.conn.q, log_level=log_level)
 
     ##############
     # Properties #
@@ -48,10 +46,6 @@ class BtfxWss:
     @property
     def channel_configs(self):
         return self.conn.channel_configs
-
-    @property
-    def account(self):
-        return self.queue_processor.account
 
     ##############################################
     # Client Initialization and Shutdown Methods #
@@ -63,7 +57,6 @@ class BtfxWss:
         :return:
         """
         self.conn.start()
-        self.queue_processor.start()
 
     def stop(self):
         """Stop the client.
@@ -90,52 +83,40 @@ class BtfxWss:
     # Data Retrieval Methods #
     ##########################
 
-    def tickers(self, pair):
+    def tickers(self):
         """Return a queue containing all received ticker data.
 
-        :param pair:
         :return: Queue()
         """
-        key = ('ticker', pair)
-        return self.queue_processor.tickers[key]
+        return self.queue_processor.tickers
 
-    def books(self, pair):
+    def books(self):
         """Return a queue containing all received book data.
 
-        :param pair:
         :return: Queue()
         """
-        key = ('book', pair)
-        return self.queue_processor.books[key]
+        return self.queue_processor.books
 
-    def raw_books(self, pair):
+    def raw_books(self):
         """Return a queue containing all received raw book data.
 
-        :param pair:
         :return: Queue()
         """
-        key = ('raw_book', pair)
-        return self.queue_processor.raw_books[key]
+        return self.queue_processor.raw_books
 
-    def trades(self, pair):
+    def trades(self):
         """Return a queue containing all received trades data.
 
-        :param pair:
         :return: Queue()
         """
-        key = ('trades', pair)
-        return self.queue_processor.trades[key]
+        return self.queue_processor.trades
 
-    def candles(self, pair, timeframe=None):
+    def candles(self, timeframe=None):
         """Return a queue containing all received candles data.
 
-        :param pair: str, Symbol pair to request data for
-        :param timeframe: str
         :return: Queue()
         """
-        timeframe = '1m' if not timeframe else timeframe
-        key = ('candles', pair, timeframe)
-        return self.queue_processor.candles[key]
+        return self.queue_processor.candles
 
     ##########################################
     # Subscription and Configuration Methods #
@@ -186,7 +167,6 @@ class BtfxWss:
     def subscribe_to_ticker(self, pair, **kwargs):
         """Subscribe to the passed pair's ticker channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -197,7 +177,6 @@ class BtfxWss:
     def unsubscribe_from_ticker(self, pair, **kwargs):
         """Unsubscribe to the passed pair's ticker channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -208,7 +187,6 @@ class BtfxWss:
     def subscribe_to_order_book(self, pair, **kwargs):
         """Subscribe to the passed pair's order book channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -219,7 +197,6 @@ class BtfxWss:
     def unsubscribe_from_order_book(self, pair, **kwargs):
         """Unsubscribe to the passed pair's order book channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -230,7 +207,6 @@ class BtfxWss:
     def subscribe_to_raw_order_book(self, pair, prec=None, **kwargs):
         """Subscribe to the passed pair's raw order book channel.
 
-        :param pair: str, Symbol pair to request data for
         :param prec:
         :param kwargs:
         :return:
@@ -243,7 +219,6 @@ class BtfxWss:
     def unsubscribe_from_raw_order_book(self, pair, prec=None, **kwargs):
         """Unsubscribe to the passed pair's raw order book channel.
 
-        :param pair: str, Symbol pair to request data for
         :param prec:
         :param kwargs:
         :return:
@@ -256,7 +231,6 @@ class BtfxWss:
     def subscribe_to_trades(self, pair, **kwargs):
         """Subscribe to the passed pair's trades channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -267,7 +241,6 @@ class BtfxWss:
     def unsubscribe_from_trades(self, pair, **kwargs):
         """Unsubscribe to the passed pair's trades channel.
 
-        :param pair: str, Symbol pair to request data for
         :param kwargs:
         :return:
         """
@@ -278,7 +251,6 @@ class BtfxWss:
     def subscribe_to_candles(self, pair, timeframe=None, **kwargs):
         """Subscribe to the passed pair's OHLC data channel.
 
-        :param pair: str, Symbol pair to request data for
         :param timeframe: str, {1m, 5m, 15m, 30m, 1h, 3h, 6h, 12h,
                                 1D, 7D, 14D, 1M}
         :param kwargs:

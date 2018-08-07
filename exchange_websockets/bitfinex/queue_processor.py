@@ -56,11 +56,11 @@ class QueueProcessor(Thread):
 
         # Keeps track of last update to a channel by id.
         self.last_update = {}
-        self.tickers = defaultdict(Queue)
-        self.books = defaultdict(Queue)
-        self.raw_books = defaultdict(Queue)
-        self.trades = defaultdict(Queue)
-        self.candles = defaultdict(Queue)
+        self.tickers = Queue()
+        self.books = Queue()
+        self.raw_books = Queue()
+        self.trades = Queue()
+        self.candles = Queue()
         self.account = Queue()
 
         # Sentinel Event to kill the thread
@@ -93,7 +93,7 @@ class QueueProcessor(Thread):
             dtype, data, ts = message
             if dtype in ('subscribed', 'unsubscribed', 'conf', 'auth', 'unauth'):
                 try:
-                    self._response_handlers[dtype](dtype, data, ts)
+                    self._response_handlers[dtype]
                 except KeyError:
                     self.log.error("Dtype '%s' does not have a response "
                                    "handler! (%s)", dtype, message)
